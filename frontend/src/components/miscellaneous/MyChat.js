@@ -1,0 +1,140 @@
+import React, { useEffect, useState } from "react";
+import { ChatState } from "../../Context/chatProvider";
+import { Box, Button, Divider, Stack, Text, useToast } from "@chakra-ui/react";
+import axios from "axios";
+import { AddIcon } from "@chakra-ui/icons";
+import { getSender } from "../../config/ChatLogics";
+import ChatLoading from "./ChatLoading";
+import GroupChatModal from "./GroupChatModal";
+
+const MyChat = ({fetchAgain}) => {
+    const [loggedUser , setLoggedUser] =useState()
+    const {user ,selectedChat , setSelectedChat, chats , setChats } = ChatState()
+
+    const toast = useToast();
+
+    const fetchChats = async()=> {
+
+        try {
+            const config = {
+                headers: {
+                    Authorization : `Bearer ${user.token}`,
+                },
+            };
+    
+            const {data} = await axios.get('/api/chat' ,config )
+            setChats(data)
+            console.log(data);
+        } catch (error) {
+            toast({
+                title: 'Error Occured !',
+                description: error.message,
+                status: 'error',
+                duration: 3000,
+                isClosable: true,
+                position:'bottom-right'
+              })
+        }
+
+    }
+
+    useEffect(()=>{
+        setLoggedUser(JSON.parse(localStorage.getItem("userInfo")))
+        fetchChats()
+    },[fetchAgain])
+
+    return (
+        <Box
+        display={{ base: selectedChat ? "none" : "flex", md: "flex" }}
+      //  style={{ display: selectedChat ? 'none' : 'flex', '@media (min-width: 48em)': { display: 'flex' } }}
+        flexDir='column'
+        alignItems='center'
+        p={3}
+        mx='0'
+        bg='gray.800'
+        w={{ base: "100%", md: "31%" }}
+        borderWidth='0px 1px 0px 0px'
+        style={{overflow: 'hidden'}}
+        >
+        <Box
+        pb={0}
+        pt={2}
+        mb={4}
+        fontSize={{ base: "28px", md: "30px" }}
+        fontFamily="Work sans"
+        display="flex"
+        w="100%"
+       // overflow='auto'
+        color='gray.100'
+        justifyContent="space-between"
+        alignItems="center"
+      >
+        <Text  fontSize={{ base: "22px", md: "22px", lg: "28px" }}>My Chats</Text>
+        <GroupChatModal>
+          <Button
+            display="flex"
+            fontSize={{ base: "17px", md: "17px", lg: "28px" }}
+            rightIcon={<AddIcon />}
+          >
+            <Text  fontSize={{ base: "12px", md: "12px", lg: "15px" }} display={{ base: 'none', md: 'none', lg: 'flex' }}>New Group Chat</Text>
+          </Button>
+          </GroupChatModal>
+
+        </Box>
+        <Divider/>
+        <Box
+        d="flex"
+        flexDir="column"
+        p={3}
+        mt={2}
+        mb={0}
+        bg="gray.700"
+        w="100%"
+        h="100%"
+        borderRadius="lg"
+        overflowY="hidden"
+        >
+            {
+                chats ?(
+
+                    <Stack overflowY='scroll' >
+                    {chats.map((chat) => (
+                    <Box
+                        onClick={() => setSelectedChat(chat)}
+                        cursor="pointer"
+                        bg={selectedChat === chat ? "gray.400" : "gray.700"}
+                        color={selectedChat === chat ? "white" : "gray.100"}
+                        px={3}
+                        py={4}
+                        borderRadius="0"
+                        key={chat._id}
+                        borderWidth='0px 0px 1px 0px'
+                    >       
+                        <Text>
+                        {!chat.isGroupChat
+                            ? getSender(loggedUser, chat.users)
+                            : chat.chatName}
+                        </Text>
+                        {chat.latestMessage && (
+                        <Text fontSize="xs">
+                            <b>{chat.latestMessage.sender.name} : </b>
+                            {chat.latestMessage.content.length > 50
+                            ? chat.latestMessage.content.substring(0, 51) + "..."
+                            : chat.latestMessage.content}
+                        </Text>
+                        )}
+                    </Box>
+                    ))}
+                    </Stack>
+
+                ):(
+                    <ChatLoading/>
+                )
+            }
+        </Box>
+        
+        </Box>
+    )
+}
+
+export default MyChat

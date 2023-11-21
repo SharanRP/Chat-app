@@ -4,8 +4,15 @@ import '../index.css'
 import { Container , Box, Center , Text, Tabs, TabList, Tab, TabPanels, TabPanel } from '@chakra-ui/react'
 import LogIn from '../components/Authentication/LogIn';
 import SignUp from '../components/Authentication/SignUp';
+import { useHistory } from 'react-router-dom/cjs/react-router-dom';
 
 const HomePage = () => {
+  const history = useHistory();
+
+  useEffect(()=>{
+    const user = JSON.parse(localStorage.getItem("userInfo"));
+    if (user) history.push("/chats")
+  },[history])
 
   return (
 
