@@ -2,14 +2,14 @@ import { CloseIcon } from "@chakra-ui/icons";
 import { Box } from "@chakra-ui/react";
 import React from "react";
 
-const UserBadge = ({userSelected , handleFunction , key}) => {
+const UserBadge = ({userSelected , handleFunction }) => {
 
     return (
         <Box
-        p='1.5'
+        p='2'
         m={1}
         borderRadius='2xl'
-        bgColor='gray.300'
+        style ={{ backgroundColor: '#4d5dfb' ,  backgroundImage: 'linear-gradient(315deg, #4d5dfb 0%, #08c8f6 74%)'}}
         color='gray.800'
         fontSize={{ base: 'xs', md: 'sm' }}
         variant='solid'

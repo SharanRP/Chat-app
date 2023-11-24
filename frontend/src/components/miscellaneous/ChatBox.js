@@ -19,7 +19,6 @@ const ChatBox = ({fetchAgain , setFetchAgain}) => {
         w={{ base: "100vh", md: "68%" }}
         borderWidth="1px"
         position="relative"
-        style={{overflow: 'hidden', height: '91vh'}}
         >
        <Box
         position="absolute"
@@ -36,7 +35,7 @@ const ChatBox = ({fetchAgain , setFetchAgain}) => {
             zIndex:1
         }}
     />
-        <Box style={{zIndex:1 , padding:'0px'}}  w={{ base: "100vh", md: "100vh" }} >
+        <Box style={{zIndex:1 , padding:'6px' , width:'100%'}}  >
         <SingleChat fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />
         </Box>
         </Box>

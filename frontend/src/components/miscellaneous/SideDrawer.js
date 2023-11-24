@@ -98,7 +98,7 @@ const SideDrawer = () => {
         d="flex"
         justifyContent='space-between'
         alignItems='center'
-        bg='gray.900'
+        bgGradient='linear(to-r, gray.900, blue.900)'
         w='100%'
         p='5px 10px 5px 10px'
         borderWidth='0px 0px 1px 0px'
@@ -139,7 +139,7 @@ const SideDrawer = () => {
         onClose={onClose}
         >
         <DrawerOverlay  />
-        <DrawerContent bgColor='gray.700'>
+        <DrawerContent bgGradient='linear(to-r, gray.900, blue.900)'>
           <DrawerCloseButton style={{color:"white"}} />
           <DrawerHeader color='white' fontSize='1.4rem' >SeachBar</DrawerHeader>
 

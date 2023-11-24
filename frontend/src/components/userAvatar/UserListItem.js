@@ -23,7 +23,7 @@ const UserListItem = ({ user , handleFunction }) => {
       my={4}
 
       borderRadius="lg"
-      style={{backgroundImage: 'linear-gradient(120deg, #616161 0%, #9bc5c3 100%)' , display:"flex" , alignItems:'center'}}
+      style={{backgroundColor: '#4d5dfb' , backgroundImage: 'linear-gradient(315deg, #4d5dfb 0%, #08c8f6 74%)' , display:"flex" , alignItems:'center'}}
     >
       <Avatar
         mr={2}

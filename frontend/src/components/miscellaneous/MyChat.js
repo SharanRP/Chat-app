@@ -51,7 +51,7 @@ const MyChat = ({fetchAgain}) => {
         alignItems='center'
         p={3}
         mx='0'
-        bg='gray.800'
+        bgGradient='linear(to-r, gray.900, #1B1D38)'
         w={{ base: "100%", md: "31%" }}
         borderWidth='0px 1px 0px 0px'
         style={{overflow: 'hidden'}}
@@ -88,7 +88,7 @@ const MyChat = ({fetchAgain}) => {
         p={3}
         mt={2}
         mb={0}
-        bg="gray.700"
+        bgGradient='linear(to-r, gray.900, #1B1D38)'
         w="100%"
         h="100%"
         borderRadius="lg"
@@ -102,7 +102,7 @@ const MyChat = ({fetchAgain}) => {
                     <Box
                         onClick={() => setSelectedChat(chat)}
                         cursor="pointer"
-                        bg={selectedChat === chat ? "gray.400" : "gray.700"}
+                        bg={selectedChat === chat ? "gray.700" : "bgGradient='linear(to-r, gray.700, #1B1D38)'"}
                         color={selectedChat === chat ? "white" : "gray.100"}
                         px={3}
                         py={4}
