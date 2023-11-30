@@ -6,7 +6,7 @@ import UserBadge from "../userAvatar/UserBadge";
 import UserListItem from "../userAvatar/UserListItem";
 import axios from "axios";
 
-const UpdateGroupChatModal= ({fetchAgain, setFetchAgain}) => {
+const UpdateGroupChatModal= ({fetchAgain, setFetchAgain , fetchMessages}) => {
     const { isOpen, onOpen, onClose } = useDisclosure()
 
     const [groupChatName, setGroupChatName] = useState();
@@ -49,6 +49,7 @@ const UpdateGroupChatModal= ({fetchAgain, setFetchAgain}) => {
     
           userSel._id === user._id ? setSelectedChat() : setSelectedChat(data);
           setFetchAgain(!fetchAgain);
+          fetchMessages()
           //fetchMessages();
           setLoading(false);
         } catch (error) {
@@ -188,7 +189,7 @@ const UpdateGroupChatModal= ({fetchAgain, setFetchAgain}) => {
 
     return (
         <>
-            <IconButton display={{display:'flex'  }} icon = {<InfoIcon />} onClick={onOpen} />
+            <IconButton display='flex' justifyContent='center' bgColor='transparent' icon = {<InfoIcon color='gray.300' height='7' width='7' />} onClick={onOpen} />
             <Modal isOpen={isOpen} onClose={onClose}>
             <ModalOverlay />
             <ModalContent  bgGradient='linear(to-r, gray.900, blue.900)' color='gray.100' >

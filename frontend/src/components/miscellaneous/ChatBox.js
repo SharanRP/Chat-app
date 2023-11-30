@@ -13,12 +13,17 @@ const ChatBox = ({fetchAgain , setFetchAgain}) => {
         display={{ base: selectedChat ? "flex" : "none", md: "flex" }}
         alignItems="center"
         flexDir="column"
-        p = {1}
-        m={2}
-        bgColor='black'
-        w={{ base: "100vh", md: "68%" }}
+        position='absolute'
+        right='2'
+        //right='0'
+       // p = {1}
+        my={2}
+        mx={0}
+      //  bgColor='black'
+        w={{ base: "97%", md: "68%" }}
         borderWidth="1px"
-        position="relative"
+        height='90.5vh'
+        zIndex={2}
         >
        <Box
         position="absolute"
@@ -26,16 +31,21 @@ const ChatBox = ({fetchAgain , setFetchAgain}) => {
         left="0"
         width="100%"
         height="100%"
+        backdropFilter="auto" 
+        backdropBlur="3px"
         style={{
             backgroundImage: `url(${DarkImage})`,
             backgroundPosition: 'center',
             backgroundSize: 'cover',
             backgroundRepeat: 'no-repeat',
-            opacity: 0.6,
+            //backdropFilter: "auto",
+            // WebkitBackdropFilter: 'blur(10px)',
+            // backdropFilter: 'blur(10px)',
+            opacity: 0.8,
             zIndex:1
         }}
     />
-        <Box style={{zIndex:1 , padding:'6px' , width:'100%'}}  >
+        <Box style={{zIndex:1 ,padding:0 , width:'100%'}}  >
         <SingleChat fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />
         </Box>
         </Box>

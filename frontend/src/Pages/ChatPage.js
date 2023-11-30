@@ -16,9 +16,10 @@ const ChatPage = () => {
         {user && <SideDrawer /> }
         <Box
         display = "flex"
+        position='relative'
         justifyContent='space-between'
         w='100%'
-        h='91%'
+        h='90vh'
         // position = 'absolute' 
         // bottom ='0px'
         style = {{justifyContent:'space-between', display:'flex'}}>

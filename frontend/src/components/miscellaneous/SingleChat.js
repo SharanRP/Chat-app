@@ -1,18 +1,92 @@
 import React, { useEffect, useState } from "react";
-import { Box, IconButton, Spinner, Text } from "@chakra-ui/react";
+import { Box, FormControl, IconButton, Input, Spinner, Text, useToast } from "@chakra-ui/react";
 import { ArrowBackIcon } from "@chakra-ui/icons";
 import ProfileModal from "./ProfileModal";
 import { ChatState } from "../../Context/chatProvider";
-import { getSender, getSenderDetails } from "../../config/ChatLogics";
+import { getSender, getSenderDetails, getSenderPic } from "../../config/ChatLogics";
 import UpdateGroupChatModal from "./UpdateGroupChatModal";
+import ScrollableChat from './ScrollableChat'
+import '../../App.css'
+import { FaPaperPlane } from "react-icons/fa";
+import axios from "axios";
+import '../../index.css'
 
 const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   const { user, selectedChat, setSelectedChat } = ChatState();
 
   const [messages , setMessages] = useState([])
   const [loading , setLoading] = useState(false)
-  const [newMessages , setNewMessages] = useState()
+  const [newMessage , setNewMessage] = useState()
   const [joke, setJoke] = useState(null);
+
+  const toast = useToast();
+
+  const typingHandler = (e) => {
+    setNewMessage(e.target.value);
+  }
+
+  const fetchMessages = async () => {
+    if (!selectedChat) return;
+
+    try {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      };
+
+      setLoading(true);
+
+      const { data } = await axios.get(`/api/message/${selectedChat._id}`, config);
+      setMessages(data);
+      setLoading(false);
+      console.log(messages)
+    } catch (error) {
+      toast({
+        title: "Error Occured!",
+        description: "Failed to Load the Messages",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+        position: "bottom-right",
+      });
+    }
+  };
+
+  const sendTheMessage = async(e) => {
+
+        if (e.key === "Enter" && newMessage) {
+            try {
+              const config = {
+                headers: {
+                  "Content-type": "application/json",
+                  Authorization: `Bearer ${user.token}`,
+                },
+              };
+              setNewMessage("");
+              const { data } = await axios.post(
+                "/api/message",
+                {
+                  content: newMessage,
+                  chatId: selectedChat,
+                },
+                config
+              );
+              console.log('data', data)
+              setMessages([...messages, data]);
+            } catch (error) {
+              toast({
+                title: "Error Occured!",
+                description: "Failed to send the Message",
+                status: "error",
+                duration: 3000,
+                isClosable: true,
+                position: "bottom-right",
+              });
+            }
+          }
+
+  }
 
   const fetchJoke = async () => {
     try {
@@ -21,7 +95,8 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
       );
       const data = await response.json();
       console.log(data)
-      const formattedJoke = `${data.setup} ${data.delivery}`;
+      const formattedJoke = `${data.setup} 
+                             ${data.delivery}`;
       setJoke(formattedJoke);
     } catch (error) {
       console.error(error.message);
@@ -33,26 +108,32 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   };
 
   useEffect(() => {
+    fetchMessages();
+  }, [selectedChat]);
+
+  useEffect(() => {
     fetchJoke();
   }, []);
 
   //handleJoke();
 
   return (
-    <div style={{ width: '100%' }}>
+    <div style={{ width: '100%'  }}>
       {selectedChat ? (
         <>
           <Text
             fontSize={{ base: '28px', md: "30px" }}
-            pb={3}
+            py={3}
             px={2}
-            width={{ base: '100%', md: '100vh' }}
+            width={{ base: '100%', md: '100%' }}
             fontFamily='Nunito Sans'
             display='flex'
-            justifyContent={{ base: 'space-between' }}
+            alignContent='center'
             alignItems='center'
+            justifyContent={{ base: 'space-between',md:'center' }}
             color='white'
             opacity='1'
+            bgGradient='linear(to-l, gray.900, cyan.900)'
             zIndex={1}
           >
             <IconButton
@@ -65,14 +146,15 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
             />
             {!selectedChat.isGroupChat ? (
               <Box
-                width={{ base: '100%', md: '100vh' }}
+                width={{ base: '100%', md: '100%' }}
                 p={2}
                 display='flex'
-                bgColor='black'
                 justifyContent='space-between'
                 style={{justifyContent:'space-between'}}
-              >
+              ><Box display='flex' px={2}>
+                <img src={getSenderPic(user , selectedChat.users)} style={{height:'3rem' , width:'3rem', borderRadius:'50%', marginRight:6 , paddingRight:'2'}} />
                 {getSender(user, selectedChat.users)}
+                </Box>
                 <ProfileModal
                   user={getSenderDetails(user, selectedChat.users)}
                 />
@@ -80,11 +162,11 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
             ) : (
               <Box display='flex' justifyContent='space-between' width='100%' >
                 {selectedChat.chatName.toUpperCase()}
-                <UpdateGroupChatModal fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />
+                <UpdateGroupChatModal fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} fetchMessages={fetchMessages} />
               </Box>
             )}
           </Text>
-          <Box
+          {/* <Box
             d="flex"
             flexDir="column"
             justifyContent="flex-end"
@@ -94,17 +176,54 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
             backdropBlur="3px"
             border='2px'
             borderColor='blue.200'
-            width={{ base: '100%', md: '100vh' }}
-            height={{ base: '83vh', md: '100vh' }}
+            width={{ base: '100%', md: '100%' }}
+            height={{ base: '83vh', md: '80vh' }}
             borderRadius="lg"
             overflowY="auto"
-          >
-            {!loading ? (
-               <Box> <Spinner color="white" position='absolute' top="50%" right='50%' h={20} w={20} size='lg' margin='auto' display='flex' justifyContent='center' /></Box>
+          > */}
+            {loading ? (
+               <Box> <Spinner color="white"  position='absolute' top='50%' right="50%" h={20} w={20} size='lg' margin='auto' display='flex' justifyContent='center' /></Box>
             ) : (
-             ''
+             <div  className="messages"> <ScrollableChat messages={messages} /> </div>
             )}
-          </Box>
+            <FormControl
+            display="flex"
+            justifyContent="space-between"
+            flexDirection="row" 
+            position="absolute"
+            bg="gray.600"
+            borderRadius='0'
+            bottom="0"
+            left="0"
+            right="0"
+            p={2.2}
+            my={0}
+            alignItems="center" 
+            onKeyDown={sendTheMessage}
+            isRequired
+            >
+            <Input
+                variant="filled"
+                bgColor="gray.600"
+                color="white"
+                borderRadius='0'
+                border='0'
+                placeholder="Click to start typing"
+                onChange={typingHandler}
+                value={newMessage}
+                flex="1" 
+            />
+            <IconButton
+                icon={<i class="fi fi-ss-paper-plane-top" style={{height:'9' , width:'9'}} ></i>}
+                color="gray.100"
+                _hover={{ color : 'gray.900' }}
+                alignItems='center'
+                bgColor='transparent'
+                aria-label="Send Message"
+                onClick={sendTheMessage} 
+            />
+            </FormControl>
+          {/* </Box> */}
         </>
       ) : (
         <Box
@@ -115,11 +234,13 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         >
           <Text
             pb={3}
+            margin={6}
+            marginTop={24}
             color='gray.100'
             fontSize='3xl'
             fontFamily='Nunito Sans'
           >
-            <p className='animated'> Click on User to Start Chatting </p>
+            <p className='animated' style={{margin:5}}> Click on User to Start Chatting </p>
             {joke && 
             <Box 
             onClick={handleClick}
@@ -135,7 +256,9 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
             borderColor='blue.200'
             borderRadius='2xl'
             padding={7} 
-            mt={36}>
+            mt={36}
+            mx={6}
+            >
             {joke}
             </Box>}
           </Text>

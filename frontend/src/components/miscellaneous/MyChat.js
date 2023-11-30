@@ -3,7 +3,7 @@ import { ChatState } from "../../Context/chatProvider";
 import { Box, Button, Divider, Stack, Text, useToast } from "@chakra-ui/react";
 import axios from "axios";
 import { AddIcon } from "@chakra-ui/icons";
-import { getSender } from "../../config/ChatLogics";
+import { getSender ,getSenderPic } from "../../config/ChatLogics";
 import ChatLoading from "./ChatLoading";
 import GroupChatModal from "./GroupChatModal";
 
@@ -46,6 +46,8 @@ const MyChat = ({fetchAgain}) => {
     return (
         <Box
         display={{ base: selectedChat ? "none" : "flex", md: "flex" }}
+        position='absolute'
+        top='0'
       //  style={{ display: selectedChat ? 'none' : 'flex', '@media (min-width: 48em)': { display: 'flex' } }}
         flexDir='column'
         alignItems='center'
@@ -69,11 +71,11 @@ const MyChat = ({fetchAgain}) => {
         justifyContent="space-between"
         alignItems="center"
       >
-        <Text  fontSize={{ base: "22px", md: "22px", lg: "28px" }}>My Chats</Text>
+        <Text  fontSize={{ base: "22px", md: "22px", lg: "32px" }} fontFamily='Nunito Sans' ml='5' >My Chats</Text>
         <GroupChatModal>
           <Button
             display="flex"
-            fontSize={{ base: "17px", md: "17px", lg: "28px" }}
+            fontSize={{ base: "17px", md: "17px", lg: "20px" }}
             rightIcon={<AddIcon />}
           >
             <Text  fontSize={{ base: "12px", md: "12px", lg: "15px" }} display={{ base: 'none', md: 'none', lg: 'flex' }}>New Group Chat</Text>
@@ -90,14 +92,14 @@ const MyChat = ({fetchAgain}) => {
         mb={0}
         bgGradient='linear(to-r, gray.900, #1B1D38)'
         w="100%"
-        h="100%"
+        h="79.5vh"
         borderRadius="lg"
         overflowY="hidden"
         >
             {
                 chats ?(
 
-                    <Stack overflowY='scroll' >
+                    <Stack overflowY='scroll'  height='79.5vh' >
                     {chats.map((chat) => (
                     <Box
                         onClick={() => setSelectedChat(chat)}
@@ -105,24 +107,43 @@ const MyChat = ({fetchAgain}) => {
                         bg={selectedChat === chat ? "gray.700" : "bgGradient='linear(to-r, gray.700, #1B1D38)'"}
                         color={selectedChat === chat ? "white" : "gray.100"}
                         px={3}
-                        py={4}
+                        py={2}
                         borderRadius="0"
                         key={chat._id}
-                        borderWidth='0px 0px 1px 0px'
+                        borderWidth='0px 0px 0px 0px'
                     >       
                         <Text>
-                        {!chat.isGroupChat
-                            ? getSender(loggedUser, chat.users)
-                            : chat.chatName}
-                        </Text>
-                        {chat.latestMessage && (
-                        <Text fontSize="xs">
+                        {!chat.isGroupChat ? (
+                            <div style={{ display: 'flex', alignItems: 'start'  }}>
+                            <img
+                                src={getSenderPic(loggedUser, chat.users)}
+                                alt="User Profile"
+                                style={{ width: '50px', height: '50px', borderRadius: '50%', marginRight: '6px' }}
+                            />
+                            <span style={{ marginLeft: '4px' }}>{getSender(loggedUser, chat.users)}
+                            {chat.latestMessage && (
+                        <Text fontSize="xs" py={1} >
                             <b>{chat.latestMessage.sender.name} : </b>
                             {chat.latestMessage.content.length > 50
                             ? chat.latestMessage.content.substring(0, 51) + "..."
                             : chat.latestMessage.content}
                         </Text>
+                        )}</span>
+                            
+                            </div>
+                        ) : (
+                            <div style={{ display: 'flex', alignItems:'start' }}>
+                            <img
+                                src={`https://api.multiavatar.com/${chat.chatName}.png`}
+                                alt="Group Chat Profile"
+                                style={{ width: '50px', height: '50px', borderRadius: '50%', marginRight: '6px' }}
+                            />
+                            <Box>{chat.chatName}
+                        </Box>
+                            </div>
                         )}
+</Text>
+
                     </Box>
                     ))}
                     </Stack>

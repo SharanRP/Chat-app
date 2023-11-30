@@ -105,20 +105,20 @@ const SideDrawer = () => {
         style = {{justifyContent:'space-between', display:'flex' , padding:'10px'}}
         >
             <Tooltip label ="Seach Users to chat" hasArrow placement="bottom-end" >
-            <Button variant='ghost' borderWidth='1px' py='4px' onClick={onOpen} >
+            <Button variant='ghost' borderWidth='1px' py='4px' onClick={onOpen}   _hover={{bgColor:'gray.600' , color:'gray.100'}} >
             <i class="fa fa-search" aria-hidden="true" color="gray-100" style={{color:"white"}} ></i>
             <Text display={{base:"none" , md:"flex" , lg:'flex'}} px={4} color='gray.100' >Search User</Text>
             </Button>
             </Tooltip>
             {/* <Spacer/> */}
-            <Text fontSize='4xl' color='gray.200'  >UniHub</Text>
-            <div>
+            <Text fontSize='4xl' color='gray.200' fontFamily='Lobster Two' ><span style={{wordSpacing:20}}>UniHub</span></Text>
+            <div >
                 <Menu>
                     <MenuButton p={1} >
                       <BellIcon style={{color:"white"}} h='25px' w='25px' />
                     </MenuButton>
                 </Menu>
-                <Menu px='4px'>
+                <Menu px='4px' position='absolute' zIndex='10' >
                     <MenuButton p={1} mx={2} bgColor='gray.500' as={Button} rightIcon={<ChevronDownIcon/>}>
                     <Avatar size='sm' cursor='pointer' name={user.name} src={user.pic} />
                     </MenuButton>
