@@ -10,20 +10,48 @@ import '../../App.css'
 import { FaPaperPlane } from "react-icons/fa";
 import axios from "axios";
 import '../../index.css'
+import io from 'socket.io-client'
+import Lottie from "lottie-react";
+import '../../animations/typing.json'
+
+const ENDPOINT = 'http://localhost:5000'
+var socket ,selectedChatCompare;
 
 const SingleChat = ({ fetchAgain, setFetchAgain }) => {
-  const { user, selectedChat, setSelectedChat } = ChatState();
+  const { user, selectedChat, setSelectedChat , notification, setNotification } = ChatState();
 
   const [messages , setMessages] = useState([])
   const [loading , setLoading] = useState(false)
   const [newMessage , setNewMessage] = useState()
   const [joke, setJoke] = useState(null);
-
+  const [socketConnected, setSocketConnected] = useState(false);
+  const [typing , setTyping] = useState(false)
+  const [isTyping , setIsTyping] = useState(false)
   const toast = useToast();
 
   const typingHandler = (e) => {
     setNewMessage(e.target.value);
+    if(!socketConnected) return;
+
+    if (!typing ){
+      setTyping(true)
+      socket.emit("typing",selectedChat._id);
+    }
+      let lastTypingTime = new Date().getTime();
+      var timerLength = 3000;
+
+      setTimeout(()=>{
+        var timeNow = new Date().getTime();
+        let timeDiff = timeNow-lastTypingTime;
+        if(timeDiff>timerLength && typing)
+        {
+          socket.emit('stop typing' , selectedChat._id);
+          setTyping(false);
+        }
+      } , timerLength)
+
   }
+
 
   const fetchMessages = async () => {
     if (!selectedChat) return;
@@ -41,6 +69,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
       setMessages(data);
       setLoading(false);
       console.log(messages)
+      socket.emit("join chat", selectedChat._id)
     } catch (error) {
       toast({
         title: "Error Occured!",
@@ -56,6 +85,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   const sendTheMessage = async(e) => {
 
         if (e.key === "Enter" && newMessage) {
+          socket.emit('stop typing' , selectedChat._id)
             try {
               const config = {
                 headers: {
@@ -74,6 +104,9 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
               );
               console.log('data', data)
               setMessages([...messages, data]);
+
+              socket.emit('new message' , data);
+
             } catch (error) {
               toast({
                 title: "Error Occured!",
@@ -108,12 +141,36 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   };
 
   useEffect(() => {
+    socket = io(ENDPOINT)
+    socket.emit("setup" , user);
+    socket.on('connected' , ()=>{setSocketConnected(true)})
+    socket.on('typing' , ()=>{setIsTyping(true)})
+    socket.on('stop typing' , ()=>{setIsTyping(false)})
+  })
+
+  useEffect(() => {
     fetchMessages();
+    selectedChatCompare = selectedChat;
   }, [selectedChat]);
 
   useEffect(() => {
     fetchJoke();
   }, []);
+
+  useEffect(()=>{
+    socket.on('message received' , (newMessagReceived)=>{
+      if(!selectedChatCompare || selectedChatCompare._id == newMessagReceived.chat._id)
+      {
+        if (!notification.includes(newMessagReceived)) {
+          setNotification([newMessagReceived, ...notification]);
+          setFetchAgain(!fetchAgain);
+        }
+      }
+      else {
+        setMessages([...messages , newMessagReceived])
+      }
+    })
+  })
 
   //handleJoke();
 
@@ -202,6 +259,18 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
             onKeyDown={sendTheMessage}
             isRequired
             >
+            {isTyping? <div><Lottie 
+            options={{
+              loop: true,
+              autoplay: true,
+              animationData: typing,
+              rendererSettings:{
+                preserveAspectTatio:"xMidYMid slice"
+              }
+              }}
+              width={70}
+              style = {{ marginBottom:15 , marginLeft:0 }}
+             /></div>: <></>}
             <Input
                 variant="filled"
                 bgColor="gray.600"
