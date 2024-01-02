@@ -22,7 +22,7 @@ const ChatBox = ({fetchAgain , setFetchAgain}) => {
       //  bgColor='black'
         w={{ base: "97%", md: "68%" }}
         borderWidth="1px"
-        height='90.5vh'
+        height='89vh'
         zIndex={2}
         >
        <Box

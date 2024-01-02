@@ -6,12 +6,14 @@ import { AddIcon } from "@chakra-ui/icons";
 import { getSender ,getSenderPic } from "../../config/ChatLogics";
 import ChatLoading from "./ChatLoading";
 import GroupChatModal from "./GroupChatModal";
+import MyChatBg from '../../Images/MyChatBg.png'
 
 const MyChat = ({fetchAgain}) => {
     const [loggedUser , setLoggedUser] =useState()
     const {user ,selectedChat , setSelectedChat, chats , setChats } = ChatState()
 
     const toast = useToast();
+
 
     const fetchChats = async()=> {
 
@@ -56,7 +58,16 @@ const MyChat = ({fetchAgain}) => {
         bgGradient='linear(to-r, gray.900, #1B1D38)'
         w={{ base: "100%", md: "31%" }}
         borderWidth='0px 1px 0px 0px'
-        style={{overflow: 'hidden'}}
+        style={{overflow: 'hidden',
+            // backgroundImage: `url(${MyChatBg})`,
+            // backgroundPosition: 'center',
+            // backgroundSize: 'cover',
+            // backgroundRepeat: 'no-repeat',
+            // opacity:0.2,
+            // position:'absolute',
+            // zIndex:5
+            }}
+        
         >
         <Box
         pb={0}
@@ -90,16 +101,25 @@ const MyChat = ({fetchAgain}) => {
         p={3}
         mt={2}
         mb={0}
+        bottom="0"
         bgGradient='linear(to-r, gray.900, #1B1D38)'
         w="100%"
-        h="79.5vh"
+        h="77vh"
         borderRadius="lg"
         overflowY="hidden"
+        style={{
+             backgroundImage: `url(${MyChatBg})`,
+             backgroundPosition: 'center',
+             backgroundSize: 'cover',
+             backgroundRepeat: 'no-repeat',
+
+        }}
+
         >
             {
                 chats ?(
 
-                    <Stack overflowY='scroll'  height='79.5vh' >
+                    <Stack overflowY='scroll'  height='77vh' >
                     {chats.map((chat) => (
                     <Box
                         onClick={() => setSelectedChat(chat)}

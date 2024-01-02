@@ -7,11 +7,13 @@ import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { useToast } from '@chakra-ui/react'
 import ChatLoading from "./ChatLoading";
 import MailIcon from '@mui/icons-material/Mail';
+import Lottie from 'lottie-react';
 import axios from "axios";
 import { Badge } from "@material-tailwind/react";
 import { IconButton } from "@material-tailwind/react";
 import UserListItem from "../userAvatar/UserListItem";
 import { getSender } from "../../config/ChatLogics";
+import octoAni from "../../animations/octoAni.json"
 
 const SideDrawer = () => {
 
@@ -30,6 +32,15 @@ const SideDrawer = () => {
         localStorage.removeItem('userInfo')
         history.push('/')
     }
+
+    const defaultOptions = {
+      loop: true,
+      autoplay: true,
+      animationData: octoAni,
+      rendererSettings: {
+        preserveAspectRatio: 'xMidYMid slice',
+      },
+    };
 
     const handleSearch = async() => {
         if(!search)
@@ -114,6 +125,13 @@ const SideDrawer = () => {
             <Text display={{base:"none" , md:"flex" , lg:'flex'}} px={4} color='gray.100' >Search User</Text>
             </Button>
             </Tooltip>
+            {/* <div style={{zIndex:5 , position:"absolute" , top:50}}>
+            <Lottie
+              options={defaultOptions}
+              height={200}
+              width={200}
+            />
+            </div> */}
             {/* <Spacer/> */}
             <Text fontSize='4xl' color='gray.200' fontFamily='Lobster Two' ><span style={{wordSpacing:20}}>UniHub</span></Text>
             <div >

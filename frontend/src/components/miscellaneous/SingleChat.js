@@ -164,7 +164,10 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         if (!notification.includes(newMessagReceived)) {
           setNotification([newMessagReceived, ...notification]);
           setFetchAgain(!fetchAgain);
-        }
+          const storedNotifications = JSON.parse(localStorage.getItem('notifications')) || [];
+          const updatedNotifications = [newMessagReceived, ...storedNotifications];
+          localStorage.setItem('notifications', JSON.stringify(updatedNotifications));
+          }
       }
       else {
         setMessages([...messages , newMessagReceived])
